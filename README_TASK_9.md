@@ -1,0 +1,346 @@
+# README for Task 9: Enemy AI
+
+## Character Controlls
+
+The game will have a tutorial or in game page about Character Controlls but
+until then here is the list of user input.
+
+Below mapping is listed in format "Xbox Controller (Dual Sense) / Mause with
+Keyboard".
+
+** Note: ** The game is being designed primarly for Game Controller.
+
+* Left Thumbstick / WSAD – Move
+* Right Thumbstick / Mouse – Look around
+* A (Cross) / Spacebar – Jump, Double Jump
+* X (Square) / Left Mouse Button – Primary Ability
+* RT (R2) / Shift Key – Secondary Ability while holding
+* RB (R1) / E Key - Next Character Form
+* LB (L1) / Q Key - Previous Character Form
+* Y (Triangle) / F Key – Interact (contextual)
+* Right Thumbstick (R3) / G Key – Attention Whistle
+* Menu (Start) / P Key – Game Pause
+* Left Thumbstick (L3) / Backspace – Character Showcase
+
+Rogue
+* Primary Ability: Dash (Slide if sprinting on the ground)
+* Secondary Ability: Sprint
+* Other: Double Jump
+
+Mage
+* Primary Ability: Magic Pulse
+* Secondary Ability: Light
+* Other: Can use portals
+
+Knight
+* Primary Ability: Sword Attack
+* Secondary Ability: Raise Shield
+* Other: Wall Jump
+
+## Task 9
+
+### How to test
+
+* Editor should open on the map `L_EnemyTestChamber`. There is a `Restricted
+Area` there with some enemies patrolling.
+* To the left there is also `Fighting Arena` where enemies will spawn one
+  character enters. They don't have patrolling routes, but they wander around.
+* Most of the files responsible for Enemy Behavior are in the `Content /
+Lyzandred / Blueprints / Enemy` directory.
+
+### Enemy Bahavior
+
+* Enemy Patrols the area following the path defined in `BP_PatrolRoute` Actors.
+The path is defined by Spline.
+* When the Enemy hears the player, they go into Investigation state, when go to
+the location they head the sound from. You can make a sound by
+	* Pressing "G" to whistle.
+	* As a Knight, Jump and make an Attack to perform a loud Ground Pound.
+	* As Knight, successful attack makes noise.
+* When the character is seen, enemy goes into Combat State and starts the chase.
+When they reach the Player Character, enemy attacks.
+* If enemy looses sight they go back to Investigation.
+* After some time, they are forgetting about the Player Character and they try
+to go back to patrolling.
+
+## Task 8
+
+### New Animations
+
+As discussed on discord, instead of stealth animation I've added the following:
+
+* I've added three ABPs for 3 forms of my character. Skeleton and Animations
+from [KayKit Adventurers Pack](https://kaylousberg.itch.io/kaykit-adventurers).
+	* `ABP_Knight`, `ABP_Mage`, `ABP_Rogue`
+	* Note: Skeletons are not identical, so I couldn't reuse them exchanging
+	only meshes. They also have accessories (like weapons) as bones, so I had to
+	hide them in ABP by scaling them to 0.0f. This is the only solution I found
+	working.
+
+* Instead of stealth crouching:
+	* While holding RT (R2) / Shift in Mage form, there is an animation of
+	casting the spell.
+	* The same in Knight form results in raising up the shield.
+	* Both Done with ABP state (`ABP_Knight`, `ABP_Mage`).
+	* Only Upper body is animated, so walking animation or jumping is not
+	affected.
+
+* Animation Montages:
+	* Knight's Sword attack also affecting only Upper Body done using Animation
+	Montage (`AM_KnightAttack`).
+	* Same with Magic Pulse ability of a Mage. It also has use of Anim Notify to
+	affect the world with magic in a proper moment of animation, with Force
+	Feedback added for emphasis. This Anim Montage also modifies speed of
+	animation sections (original effect was too long). `AM_CastingSpell`
+	* Dash and Power slide (Rogue) are done with Anim Montages as well. Both
+	animations could not be retargeted from previous skeleton so I redone them
+	using Level Sequencer (`AS_GroundSlide`, `AS_RogueDash`).
+	* These Montages are played from special ability actor components:
+	`BP_AbilityMagicComponent`, `BP_AbilityAttackComponent`,
+	`BP_AbilityDashComponent`.
+
+## Task 7
+
+### BFL
+
+* In C++:
+	* `Lyz_CharacterLibrary`, `Lyz_GameStateLibrary` for useful methods related
+	to my Pawn and `GameState`.
+	* `Lyz_WorldLibrary` because `GetWorld()` required a lot of null checks
+* In Blueprints:
+	* `BFL_InteractableFunctionLibrary` - helpers for extracting components out
+	of actors.
+
+### Main Menu Widget
+
+* `L_MainMenu` has simple Main Menu. `Start Game` and `Quit` works. `Settings`
+is a placeholder.
+* It is possible to use mouse, keyboard or controller, but has focus issues.
+
+### HUD
+
+* Number of coins in the HUD updates when collecting coins. `WBP_LevelHud`
+contains update logic based on dispatcher
+
+### Actor Components
+
+* I reworked Interactable system to components.
+	* `BP_InteractableComponent` - Holds logic for object being interactable.
+	Shows, hides widget, holds state.
+	* `BP_UnlockableComponent` - Together with object strategies triggers a
+	reaction on Interactable and Switchable after key is collected.
+	* `BP_InteractionCharacterComponent` - Attached to character. It
+	communicates with `BP_InteractableComponent` to show/ hide widget and with
+	`Lyz_InteractableInterface` to trigger interactions.
+* `Lyz_BlinkComponent` - simple component in C++ that is responsible for
+character blinking after form changed.
+* The whole Form, Abilities and Magic solutions are based on ActorComponents,
+but there are some unfinished solutions there.
+
+### Interfaces
+
+* `Lyz_InteractableInterface` and `Lyz_SwitchableInterface` as part of
+"Interactable" solution
+
+## Task 6
+
+### Level Cutscene
+
+* Cutscene is played after the character reaches Act1 (right after tunnel exit).
+* Camera Cut - Cutscene start with fluent blend, ends with cut.
+* Effects
+	* Camera movement
+	* Camera FOV changed before the entrance to the tunnel
+	* Torches lights up (method exposed from torch, used in events in sequencer)
+	* Door opens (modified rotation of the mesh)
+	* Book in the center of the labirynth glows (method exposed in `BP_Key`)
+
+### Button Cutscene
+
+* Left Thumbstick (L3) / Backspace – Character Showcase.
+* Camera switches to `CineCamere` in front of the character using `Set View
+Target with Blend`.
+* Random one of three anim montages is played (slide, double jump, sprint).
+
+### Camera change for ability
+
+* LT (L2) / Q – Magical Light while holding
+* Camera changes offset and spring arm length to be a little closer to the
+character and over the right arm.
+
+## Task 5
+
+### Level flow
+
+* The game should start with `L_MainMenu` where you will be redirected to
+`L_MainLevel` after 5 seconds.
+* The "NPC" will tell you to go to the ACT1 and find an evil book. It is hidden
+in the center of the Labirynth.
+* Then you have to go back, and travel to ACT2. When you reach the exit, the
+game quits (after you go through the door).
+
+Know issues:
+* I forgot to change the starting level in the Project Settings. Sorry for that.
+* There is annoying backtracking with bringing the book back. I implemented a
+teleport (solution is in TestChamber), but I had a bug and did not have time to
+fix it so I removed them. But If you die, you still have the book collected 
+(another known issue).
+* If you miss this checkpoint and die, the game will return to player start and
+won't unload the levels.
+* There are some very temporary solutions in the code.
+
+### Sublevels
+
+* I've added two solutions here:
+	* LevelLoader (`Lyz_LevelLoader`, `BP_LevelLoader`) is reponsible for loading
+	a sublevel. The aim is to load level when character goes through tunnel.
+	* LevelLoadingManager (`Lyz_LevelLoadingManager`, `BP_LevelLoadingManager`)
+	gets all the loaders from level. When one loads, manager asks other loaders
+	to unload their level
+* There is also an `ActorComponent` attached to some actors that is responsible
+for reaction on level loaded: torches light up, doors open.
+
+### Keys
+
+* I've added a system of keys that is stored in `GameState`. You can create and
+choose an aset with `DataAssets`.
+* The key system I created works well with props for interaction. You place an
+Actor on the stage, drag `BP_UnlockInteractableComponent` on it, and
+select the `DataAsset` key that unlocks it. You can then add the `BP_Key` to the
+scene, select its static mesh and the same `DataAsset`, and collecting the key
+will unlock interactions with the object. It works on doors, chests, and portals.
+
+### Event Dispatchers
+
+* After Loading/Unloading a Level (`BP_SwitchOnOnLoadComponent`).
+* Keys system (`BP_Key`, `Lyz_Key`, `BP_Lyz_GameState`). When the Key is
+collected, GameState notifies the listeners. One of them is
+`BP_UnlockInteractableComponent`.
+
+## Task 4
+
+### Inheritance
+
+I wanted to understand inheritance and connection between BP and Cpp in Unreal
+better so I spent significant amount of time on that area. I know this will be
+partially discussed later, but I learn more when I experiment before someone
+tell me how to do it, so I can clearly see my mistakes.
+
+* Coins:
+	* `ALyz_CoinPicup`, `ULyz_CoinType`, `BP_CoinBase`, `BP_CoinCopper`,
+	`BP_CoinSilver`, `BP_CoinGold`
+	* Done in similar manner as in Sifuri. Each coin has different value that is
+	added to the widget visible on the screen.
+* Traps:
+	* `ALyz_Trap`, `BP_SpikeTrap`, `BP_KillingPlane`, `BP_Flamethrower`,
+	`BP_SpikedPillarTrap`
+	* All inherit from a class `Lyz_Trap` in C++. They have implemented a single
+	common method to kill a character
+* Dungeon Tunnels:
+	* `BP_DungeonTunnel`, `BP_DungeonCorner`, and `BP_DungeonTunnelWall` have
+	all the construction script done in Cpp. They are using ISM to optimise draw
+	calls.
+	* Tunnel and Corner have common base class. 
+
+**Note:** Later on I discovered that everything can be build witch just tunnels
+and walls so it would be better for them to have single parrent or use each
+other, but I wanted to avoid another refactor so I left it there. It caused me
+enough crashes of the Editor.
+
+* Spawners:
+	* `BP_CircleCoinSpawner`, `BP_RectangleCoinSpawner`, `BP_LineCoinSpawner`
+	inhertits from `ALyz_CircleCoinSpawner`, `ALyz_RectangleCoinSpawner`,
+	`ALyz_LineCoinSpawner`. They have a common base of `ALyz_CoinSpawner`
+
+**Note**. I had a couple of iterations here.
+* Each of these spawners had quite complex spawning grapf in BP, and I wanted to
+move this part to Cpp. But coin actors to spawn were defined in BP only.
+* I started with mapping done in BP and duplicated in every spawner. 
+* In next iteration I tried to implement a strategy design pattern using
+Instanced `UObject`. You can see the result in `SpawnStrategy` directory in Cpp
+and in `BP_RectangleCoinSpawnerWithStrategy`. Unfortunately, with the params in
+generic SpawnStrategy I was not able to use the 3d widget in editor which made
+the solution less designer-firendly. I resigned from this solution, but the code
+for now (to reference when writing more later).
+* In the last iteration, I used the pattern from previous iteration to create
+`ULyz_CoinMapper` and use it to use BP code (`BP_CoinMapper`) in Cpp.
+
+### Input and Sprint
+
+I copied sprint from another sample project, so not the best example. But I
+implemented other movement options myself.
+
+* RT (R2) / Shift – Sprint while holding (copied).
+* X (Square) / Left Mouse Button – Dash (Slide if sprinting on the ground).
+* Left Thumbstick / WSAD – Move. I did not like how the character is turning
+slowly. I wanted more "snappy" turning so I implemented character turning around
+in Blueprint.
+* LT (L2) / Q – Magical Light while holding. It also has flickering nice
+material.
+
+### Game Pause
+
+* Menu (Start) / P – Game Pause. 
+* Added through new IMC.
+* I've added simple pause widget so it's clear how to unpause (static text for
+now).
+
+## Task 3
+
+### Resources picked on collision
+
+* Rotating coins in the game world. When character picks it up, sound cue is
+played and value in Game State is updated.
+* Simple Widget with animation when coin is picked up.
+* 3 types of coins: Copper (worth 1), Silver (worth 5), Gold (worth 10).
+Different shape, material instance. Inheritance based on UObject.
+* I also implemented spawners to easier place coins on the level editor:
+	* Circle spawner (radius param, you can specify coins)
+	* Line spawner (line vector param, you can specify coins)
+	* Chest (uses circle spawner), that opens on interaction. I forgot that I
+	can add child actor, so the code there is a little messy.
+	* More on inheritance here in Task 4.
+
+### Static Meshes 
+
+* From Geometry
+	* Coin static meshes
+	* Traps static meshes: rotating pillar and spikes on the ground
+	* Stairs leading to tunnel
+
+* Imported
+	* Chest asset
+	* Torch asset
+	* Fire niagara effect for torches and flamethrower
+	* Tunnel assets: walls, floor, ceiling, column
+
+* Instanciated Static Meshes
+	* Tunnel is build using Bluprint that adds ISM to its scene root
+	dynamically. But the code in Construction Script is awful. I yet have to
+	refactor it. I also added BP struct to handle parameters. I'm also not proud
+	of this part.
+	* Spike Trap Blueprint also uses ISM for spikes.
+
+### Lightning
+
+* Torches on the wall are emmiting static point light
+* I made it flicker a little bit using material, if "Flicker Light" is checked
+in BP instance on the map.
+
+### Landscape
+
+* For Landscape go to map `L_LandscapeTest`. There is a placeholder for the
+Labirynth, but I only finished one tunnel with traps. There is a reward at the
+end of it.
+* There is also `L_TestChamber`, where I tested mechanics in isolation.
+
+### Enemies (Traps)
+
+Intead of enemies, I implemented traps. The idea is similar for now – on
+collision kill the character (I don't plan any health for the character).
+
+* Spike trap – Rows, Cols, Gap controlled from editor
+* Spiked Pillar – Movement Vector and movement duration can be specified.
+* Flamethrower
+* Killing plane – for faling off the map (KillZ caused me some problems), and
+dangerous surfaces (e.g. lava)

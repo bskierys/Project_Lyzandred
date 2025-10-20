@@ -1,0 +1,51 @@
+# Packed Project
+Packed
+
+# Binariesfolder
+Binaries
+
+# DerivedDataCache folder 
+DerivedDataCache
+
+# Intermediate folder  
+Intermediate
+
+# Saved folder  
+Saved
+
+# visual studio solution
+*.sln
+
+# visual studio files
+.vs
+
+# JetBrains files
+.idea
+
+# Irrelevant binaries
+*-DebugGame.*
+*-Shipping.*
+
+# specyfic folder
+DerivedDataCache/*
+Binaries/*-Shipping.*
+Intermediate/*
+
+Saved/
+*.csproj.*
+.vs/*
+*.suo
+*.opensdf
+*.sdf
+*.tmp
+*.mdb
+obj/
+*.vcxproj
+*.sln
+*-Debug.*
+FileOpenOrder/
+*.xcworkspace
+*.xcodeproj
+./Makefile
+./CMakeLists.txt
+FeaturePacks/*

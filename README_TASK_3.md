@@ -1,0 +1,94 @@
+# README for Task 3: Creating my own world
+
+## Character Controlls
+
+The game will have a tutorial or in game page about Character Controlls but untill then here is the list of user input. Below mapping is listed for Xbox Controller (Dual Sense) / Mause with Keyboard.
+
+** Note: ** The game is being designed primarly for Game Controller.
+
+* Left Thumbstick / WSAD – Move
+* Right Thumbstick / Mouse – Look around
+* A (Cross) / Spacebar – Jump, Double Jump
+* RT (R2) / Shift – Hold to sprint
+* X (Square) / Left Mouse Button – Dash (Slide if sprinting on the ground)
+* Y (Triangle) / F – Interact (contextual)
+* Menu (Start) / P – Game Pause
+* D-Pad Down / R – Respawn on level start (useful when stuck)
+
+## Level introduction
+
+* The game opens at the `L_Landscape` map. I included so gameplay there.
+* It is said there is a treasure at the center of the Dungeon on top of the mysterious hill. Can you reach it?
+
+*Level Tip*: Sprint allows longer jump. Sliding before jump even further. For super long jump: Sprint -> Slide -> Double Jump (before end of slide) -> Dash.
+
+## Task 3
+
+### Resources picked on collision
+
+* Rotating coins in the game world. When character picks it up, sound cue is played and value in Game State is updated.
+* Simple Widget with animation when coin is picked up.
+* 3 types of coins: Copper (worth 1), Silver (worth 5), Gold (worth 10). Different shape, material instance. Inheritance based on UObject.
+* I also implemented spawners to easier place coins on the level editor:
+	* Circle spawner (radius param, you can specify coins)
+	* Line spawner (line vector param, you can specify coins)
+	* Chest (uses circle spawner), that opens on interaction. I forgot that I can add child actor, so the code there is a little messy.
+	* No inheritance in this area yet (work in progress)
+
+### Static Meshes 
+
+* From Geometry
+	* Coin static meshes
+	* Traps static meshes: rotating pillar and spikes from the ground
+	* Stairs leading to tunnel
+
+* Imported
+	* Chest asset
+	* Torch asset
+	* Fire niagara effect for torches and flamethrower
+	* Tunnel assets: walls, floor, ceiling, column
+
+* Instanciated Static Meshes
+	* Tunnel is build using Bluprint that adds ISM to its scene root dynamically. But the code in Construction Script is awful. I yet have to refactor it. I also added BP struct to handle parameters. I'm also not proud of this part.
+	* Spike Trap Blueprint also uses ISM for spikes.
+
+### Lightning
+
+* Torches on the wall are emmiting static point light
+* I made it flicker a little bit using material, if "Flicker Light" is checked in BP instance on the map.
+
+### Landscape
+
+* For Landscape go to map `L_LandscapeTest`. There is a placeholder for the Labirynth, but I only finished one tunnel with traps. There is a reward at the end of it.
+* There is also `TestLevel`, where I tested mechanics in isolation.
+
+### Enemies (Traps)
+
+Intead of enemies, I implemented traps. The idea is similar for now – on collision kill the character (I don't plan any health for the character).
+
+* Spike trap – Rows, Cols, Gap controlled from editor
+* Spiked Pillar – Movement Vector and movement duration can be specified.
+* Flamethrower
+* Killing plane – for faling off the map (KillZ caused me some problems), and dangerous surfaces (e.g. lava)
+
+## Task 4 (In Progress)
+
+### Inheritance
+
+* Coins has CoinType similar to what is in Sifuri.
+* Traps all inherit from a class `Lyz_Trap` in C++. They have implemented a single common method to kill a character (causing some problems right now).
+* No inheritance in spawners for now (in progress).
+
+### Input and Sprint
+
+I copied sprint from another sample project, so not the best example. But I implemented other movement options myself.
+
+* RT (R2) / Shift – Hold to sprint (copied).
+* X (Square) / Left Mouse Button – Dash (Slide if sprinting on the ground).
+* Left Thumbstick / WSAD – Move. I did not like how the character is turning slowly. I wanted more "snappy" turning so I implemented character turning around in Blueprint.
+
+### Game Pause
+
+* Menu (Start) / P – Game Pause. 
+* I've added simple pause widget so it's clear how to unpause.
+
