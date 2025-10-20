@@ -34,18 +34,38 @@ clarity. Naming example: `README_TASK_3.md`.
 
 ## Character Controlls
 
-The game will have a tutorial or in game page about Character Controlls but untill then here is the list of user input. Below mapping is listed for Xbox Controller (Dual Sense) / Mause with Keyboard.
+The game will have a tutorial or in game page about Character Controlls, but
+until then here is the list of user input. The below mapping is listed for Xbox
+Controller (Dual Sense) / Mouse with Keyboard.
 
-** Note: ** The game is being designed primarly for Game Controller.
+** Note: ** The game is being designed primarily for Game Controller.
 
 * Left Thumbstick / WSAD – Move
 * Right Thumbstick / Mouse – Look around
 * A (Cross) / Spacebar – Jump, Double Jump
-* RT (R2) / Shift – Sprint while holding.
-* X (Square) / Left Mouse Button – Dash (Slide if sprinting on the ground)
-* Y (Triangle) / F – Interact (contextual)
-* LT (L2) / Q - Summons light while holding.
-* Menu (Start) / P – Game Pause
+* X (Square) / Left Mouse Button – Primary Ability
+* RT (R2) / Shift Key – Secondary Ability while holding
+* RB (R1) / E Key - Next Character Form
+* LB (L1) / Q Key - Previous Character Form
+* Y (Triangle) / F Key – Interact (contextual)
+* Right Thumbstick (R3) / G Key – Attention Whistle
+* Menu (Start) / P Key – Game Pause
+* Left Thumbstick (L3) / Backspace – Character Showcase
+
+Rogue
+* Primary Ability: Dash (Slide if sprinting on the ground)
+* Secondary Ability: Sprint
+* Other: Double Jump
+
+Mage
+* Primary Ability: Magic Pulse
+* Secondary Ability: Light
+* Other: Can use portals
+
+Knight
+* Primary Ability: Sword Attack
+* Secondary Ability: Raise Shield
+* Other: Wall Jump
 
 ## Used Assets
 
@@ -55,6 +75,8 @@ give credit.
 * [Devvy Platformer Assets](https://devenabled.itch.io/devvy-channel-mascot-project)
 * [Stylized Fire Assets](https://www.unrealengine.com/marketplace/en-US/product/stylized-fire-effects?sessionInvalidated=true)
 * [KayKit - Dungeon Remastered Pack](https://kaylousberg.itch.io/kaykit-dungeon-remastered)
+* [KayKit - Character Pack : Adventurers](https://kaylousberg.itch.io/kaykit-adventurers)
+* [KayKit - Character Pack : Skeletons](https://kaylousberg.itch.io/kaykit-adventurers)
 
 ## Troubleshooting
 
