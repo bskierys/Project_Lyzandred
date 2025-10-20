@@ -1,5 +1,7 @@
 #include "Lyz_LevelLoader.h"
-#include "Lyz_LevelLoadingManager.h"
+#include "LevelDataAsset.h"
+#include "LevelLoaderSubsystem.h"
+#include "Project_Lyzandred/Lyz_WorldLibrary.h"
 
 ALyz_LevelLoader::ALyz_LevelLoader()
 {
@@ -10,22 +12,26 @@ void ALyz_LevelLoader::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsValid(AssignedManager))
+	const UWorld* World = ULyz_WorldLibrary::GetWorldSafe();
+	if (World)
 	{
-		AssignedManager->RegisterLevelLoader(this);
+		LevelLoaderSubsystem = World->GetSubsystem<ULevelLoaderSubsystem>();
+	}
+
+	if (!LevelLoaderSubsystem)
+	{
+		UE_LOG(LogTemp, Error, TEXT("LevelLoadingSubsystem not found"));
+		return;
+	}
+
+	if (LevelToLoad)
+	{
+		LevelLoaderSubsystem->RegisterLevel(LevelToLoad);
 	}
 }
 
 void ALyz_LevelLoader::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	OnLevelLoaded.Clear();
-	OnLevelUnLoaded.Clear();
-
-	if (IsValid(AssignedManager))
-	{
-		AssignedManager->UnregisterLevelLoader(this);
-	}
-
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -34,9 +40,26 @@ void ALyz_LevelLoader::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ALyz_LevelLoader::NotifyLevelLoaded()
+void ALyz_LevelLoader::LoadLevel_Implementation()
 {
-	OnLevelLoaded.Broadcast(this);
+	if (!LevelLoaderSubsystem || !LevelToLoad)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missing subsystem or LevelData"));
+		return;
+	}
+
+	LevelLoaderSubsystem->LoadSublevelsFromData(LevelToLoad, true);
+}
+
+void ALyz_LevelLoader::UnloadLevel_Implementation()
+{
+	if (!LevelLoaderSubsystem || !LevelToLoad)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missing subsystem or LevelData"));
+		return;
+	}
+
+	LevelLoaderSubsystem->UnloadSublevelsFromData(LevelToLoad);
 }
 
 ETraversalDirection ALyz_LevelLoader::ComputeCrossDirection(float EntryDot, float ExitDot)
@@ -53,9 +76,3 @@ ETraversalDirection ALyz_LevelLoader::ComputeCrossDirection(float EntryDot, floa
 
 	return ETraversalDirection::Returned;
 }
-
-void ALyz_LevelLoader::NotifyLevelUnLoaded()
-{
-	OnLevelUnLoaded.Broadcast(this);
-}
-

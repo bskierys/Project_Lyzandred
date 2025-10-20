@@ -5,17 +5,15 @@
 #include "GameFramework/Actor.h"
 #include "Lyz_LevelLoader.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelLoaded, ALyz_LevelLoader*, Loader);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUnloaded, ALyz_LevelLoader*, Loader);
-
-class ALyz_LevelLoadingManager;
+class ULevelLoaderSubsystem;
+class ULevelDataAsset;
 
 UCLASS(Blueprintable)
 class PROJECT_LYZANDRED_API ALyz_LevelLoader : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ALyz_LevelLoader();
 
 protected:
@@ -23,35 +21,24 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UFUNCTION(BlueprintCallable, Category="Events")
-	void NotifyLevelUnLoaded();
-
-	UFUNCTION(BlueprintCallable, Category="Events")
-	void NotifyLevelLoaded();
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static ETraversalDirection ComputeCrossDirection(float EntryDot, float ExitDot);
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Level")
-	TSoftObjectPtr<UWorld> LevelToLoad = nullptr;
+	ULevelDataAsset* LevelToLoad = nullptr;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Level")
-	ALyz_LevelLoadingManager* AssignedManager = nullptr;
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="Events")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Events")
 	void LoadLevel();
-	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="Events")
-	void UnLoadLevel();
+	virtual void LoadLevel_Implementation();
 
-	UPROPERTY(BlueprintAssignable, Category="Events")
-	FOnLevelLoaded OnLevelLoaded;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Events")
+	void UnloadLevel();
+	virtual void UnloadLevel_Implementation();
 
-	UPROPERTY(BlueprintAssignable, Category="Events")
-	FOnLevelLoaded OnLevelUnLoaded;
-
-	
+protected:
+	UPROPERTY()
+	ULevelLoaderSubsystem* LevelLoaderSubsystem = nullptr;
 };

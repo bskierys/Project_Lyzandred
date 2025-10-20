@@ -553,3 +553,10 @@ certain area (not based on senses).
     * Turning off perception for unspawned enemies.
 
 * LYZ-205 [Enemy] Enemies should return to patrol area running.
+
+* LYZ-209 [Level] Level Loading Subsystem.
+    * Deleted `LevelLoadingManager`.
+    * Removed all level loading logic from `LevelLoader`.
+    * Moved all the logic to a new World Subsystem `LevelLoaderSubsystem`.
+    * Updated `BP_SwitchOnOnLoadComponent` to use Subsystem.
+    * Added Data Asset representing levels.
