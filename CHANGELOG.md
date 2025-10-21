@@ -560,3 +560,11 @@ certain area (not based on senses).
     * Moved all the logic to a new World Subsystem `LevelLoaderSubsystem`.
     * Updated `BP_SwitchOnOnLoadComponent` to use Subsystem.
     * Added Data Asset representing levels.
+
+### 2025-10-21
+
+* LYZ-210 [Level] Create Invisible wall around the main level dungeon to
+prevent jumping off the dungeon.
+
+* LYZ-179 Create a custom default collision channel "BlockAllButCamera"
+    * Fix after it disappeared.
