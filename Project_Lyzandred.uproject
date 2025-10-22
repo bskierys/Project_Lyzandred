@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"CoreUObject",
 				"Engine",
-				"NavigationSystem"
+				"NavigationSystem",
+				"DeveloperSettings"
 			]
 		}
 	],

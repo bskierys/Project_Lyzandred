@@ -568,3 +568,12 @@ prevent jumping off the dungeon.
 
 * LYZ-179 Create a custom default collision channel "BlockAllButCamera"
     * Fix after it disappeared.
+
+### 2025-10-22
+
+* LYZ-211 [Quests] Build Event Subsystem that takes and distributes the events
+in the game.
+    * Config of Channels that are registered through Project Settings.
+    * Each channel holds a history of events sent to help with counting methods
+    and checking events fired before subscribing to a channel.
+    * Events can have tags and custom Payloads. All can be defined in C++ or BP.
