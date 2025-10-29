@@ -577,3 +577,25 @@ in the game.
     * Each channel holds a history of events sent to help with counting methods
     and checking events fired before subscribing to a channel.
     * Events can have tags and custom Payloads. All can be defined in C++ or BP.
+
+### 2025-10-29
+
+* LYZ-212 [Quests] The Quest subsystem configurable in Project Settings with DA.
+  * `GameInstanceSubsystem` responsible for Quests.
+  * Each Quest is `UObject` and has an array of `UObject` Stages.
+  * All Quests are initialized on the beginning of play.
+  * Quests can override a method to start listening for activation. Stages
+    the same for Completion.
+  * Stages have to be completed in linear order. Once all of them are
+    completed, the whole Quest is Completed.
+  * Quests uses EventSubsystem both to activate events and to provide a
+    communication about Quest changes.
+
+* LYZ-213 [Quests] Implement simple quest to kill 5 skeletons.
+  * Implemented in `L_EnemyTestChamber`.
+  * Includes 2 Blueprint stages that can be used for the future quests.
+
+* LYZ-214 [Quests] UI to display an active quest in the HUD.
+  * Simple UI that needs refinement.
+  * Displays the current tracked quest, as well as prompt about updates to
+    any Quest.

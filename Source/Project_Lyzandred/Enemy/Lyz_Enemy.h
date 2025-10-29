@@ -8,6 +8,7 @@
 #include "Project_Lyzandred/Pawn/Lyz_KillableInterface.h"
 #include "Lyz_Enemy.generated.h"
 
+class ULyz_EnemyType;
 class ULyz_EnemyMovementModeAsset;
 class ULyz_PassiveEnemyBehaviour;
 
@@ -48,6 +49,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void PlaySpawnAnimation();
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TSubclassOf<ULyz_EnemyType> EnemyType;
 	
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	bool bIsAlerted = false;
