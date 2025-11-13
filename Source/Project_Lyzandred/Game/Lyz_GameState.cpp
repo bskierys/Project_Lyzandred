@@ -28,3 +28,28 @@ bool ALyz_GameState::GetKey(FName Id) const
 	}
 	return false;
 }
+
+// TODO: Move form changing to form subsystem
+void ALyz_GameState::SetCurrentCharacterForm(ULyz_KeyDefinition* NewForm, TArray<ULyz_KeyDefinition*> AvailableForms)
+{
+	if (!IsValid(NewForm))
+	{
+		return;
+	}
+
+	for (const auto Form: AvailableForms)
+	{
+		if (const auto KeyDefinition = Form; IsValid(KeyDefinition))
+		{
+			if (Form == NewForm)
+			{
+				CurrentCharacterForm = Form;
+				SetKey(Form, true);
+			}
+			else
+			{
+				SetKey(Form, false);
+			}
+		}
+	}
+}

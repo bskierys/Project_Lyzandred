@@ -599,3 +599,13 @@ in the game.
   * Simple UI that needs refinement.
   * Displays the current tracked quest, as well as prompt about updates to
     any Quest.
+
+### 2025-11-13
+
+* LYZ-121 [Character] Spawn the same form of character when respawned after
+death.
+  * Saving the current form in the Game State and restoring it on Pawn
+  `BeginPlay`.
+
+* LYZ-134 [Bug] Magic visibility does not reset on character death.
+  * Fixed with restoring the character form after death.

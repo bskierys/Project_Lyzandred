@@ -13,6 +13,37 @@ void ALyz_TriformCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	GameState = ULyz_GameStateLibrary::GetLyzGameState();
+
+	if (!IsValid(GameState))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't get game state"));
+		return;
+	}
+
+	if (const auto SavedForm = GameState->CurrentCharacterForm)
+	{
+		int32 FoundIndex = -1;
+		for (int32 i = 0; i < AvailableForms.Num(); i++)
+		{
+			if (const auto& Form = AvailableForms[i]; Form->KeyDefinition == SavedForm)
+			{
+				FoundIndex = i;
+				break;
+			}
+		}
+		if (FoundIndex >= 0)
+		{
+			SwitchFormToIndex(FoundIndex);
+		}
+		else
+		{
+			SwitchFormToIndex(0);
+		}
+	}
+	else
+	{
+		SwitchFormToIndex(0);
+	}
 }
 
 void ALyz_TriformCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -112,27 +143,24 @@ bool ALyz_TriformCharacter::SwitchForm_Implementation(UFormDataAsset* NewForm)
 
 	const bool InitializeSuccessful = InitializeNewFormAbilityComponent(NewForm);
 
-	// dispatch key event of changed form
-	for (const auto Form: AvailableForms)
-	{
-		if (const auto KeyDefinition = Form->KeyDefinition; IsValid(KeyDefinition) && IsValid(GameState))
-		{
-			if (Form == NewForm && InitializeSuccessful)
-			{
-				GameState->SetKey(KeyDefinition, true);
-			}
-			else
-			{
-				GameState->SetKey(KeyDefinition, false);
-			}
-			
-		}
-	}
-
 	if (!InitializeSuccessful)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't initialize abilities for new form"));
 		return false;
+	}
+	
+	// dispatch key event of changed form
+	if (IsValid(GameState))
+	{
+		TArray<ULyz_KeyDefinition*> AvailableFormKeys;
+		for (const auto Form: AvailableForms)
+		{
+			if (const auto KeyDefinition = Form->KeyDefinition; IsValid(KeyDefinition))
+			{
+				AvailableFormKeys.Add(KeyDefinition);
+			}
+		}
+		GameState->SetCurrentCharacterForm(NewForm->KeyDefinition, AvailableFormKeys);
 	}
 	
 	CurrentFormData = NewForm;

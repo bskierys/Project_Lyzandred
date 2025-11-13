@@ -23,6 +23,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetKey(FName Id) const;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Form")
+	ULyz_KeyDefinition* CurrentCharacterForm = nullptr;
+
+	UFUNCTION(BlueprintCallable, Category="Character Form")
+	void SetCurrentCharacterForm(ULyz_KeyDefinition* NewForm, TArray<ULyz_KeyDefinition*> AvailableForms);
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnKeyChanged, FName, Key, bool, Value);
 
 	UPROPERTY(BlueprintAssignable)
