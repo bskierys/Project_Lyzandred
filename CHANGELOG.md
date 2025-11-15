@@ -609,3 +609,8 @@ death.
 
 * LYZ-134 [Bug] Magic visibility does not reset on character death.
   * Fixed with restoring the character form after death.
+
+### 2025-11-15
+
+* LYZ-170 [Level] Build a level with platforming challenges for all three forms.
+  * Act 3 with a simple quest to find the murderer.
