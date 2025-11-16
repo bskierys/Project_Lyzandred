@@ -614,3 +614,10 @@ death.
 
 * LYZ-170 [Level] Build a level with platforming challenges for all three forms.
   * Act 3 with a simple quest to find the murderer.
+
+### 2025-11-16
+
+* LYZ-228 [Plugin] Use another plugin in the project.
+  * Add `Look At Actor Component` to NPCs so that they rotate to follow the
+  player character
+
