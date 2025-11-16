@@ -5,6 +5,27 @@
 
 DEFINE_LOG_CATEGORY(LogTimer)
 
+void UTimerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	UE_LOG(LogTimer, Log, TEXT("Timer Subsystem initialized"));
+}
+
+void UTimerSubsystem::Deinitialize()
+{
+	OnTimerStarted.Clear();
+	OnTimerUpdated.Clear();
+	OnTimerFinished.Clear();
+	
+	if (PendingCountdownFinished.IsBound())
+	{
+		PendingCountdownFinished.Clear();
+	}
+	
+	UE_LOG(LogTimer, Log, TEXT("Timer Subsystem deinitialized"));
+	Super::Deinitialize();
+}
+
 void UTimerSubsystem::StartTimer()
 {
 	if (bRunning)
@@ -17,7 +38,8 @@ void UTimerSubsystem::StartTimer()
 	bFinishedNotified = false;
 	bRunning = true;
 	StartTime = NowSeconds();
-	
+
+	OnTimerStarted.Broadcast(ETimerMode::Stopwatch);
 	UE_LOG(LogTimer, Log, TEXT("Stopwatch started"));
 }
 
@@ -54,6 +76,7 @@ void UTimerSubsystem::StartCountdown(float DurationSeconds, FOnCountdownFinished
 
 	PendingCountdownFinished = OnFinished;
 
+	OnTimerStarted.Broadcast(ETimerMode::Countdown);
 	OnTimerUpdated.Broadcast(CurrentTime);
 	UE_LOG(LogTimer, Log, TEXT("Countdown started for %f seconds"), CountdownDuration);
 

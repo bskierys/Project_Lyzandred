@@ -621,3 +621,11 @@ death.
   * Add `Look At Actor Component` to NPCs so that they rotate to follow the
   player character
 
+* LYZ-226 [Plugin] Create Timer Plugin.
+  * Timer Subsystem with basic Start/Stop/Countdown and callbacks.
+  * Example Widget implementation.
+  * README file and screenshot for easier integration.
+
+* LYZ-227 [Plugin] Use Timer Plugin in the level.
+  * Lever that activates the environment in Act 3 and that is switched off
+  after some time.

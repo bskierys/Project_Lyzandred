@@ -6,19 +6,19 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "TimerSubsystem.generated.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTimer, Log, All);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimerUpdatedSignature, float, CurrentTime);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimerFinishedSignature);
-DECLARE_DYNAMIC_DELEGATE(FOnCountdownFinished);
-
-
 UENUM(BlueprintType)
 enum class ETimerMode : uint8
 {
 	Stopwatch UMETA(DisplayName = "Stopwatch"),
 	Countdown UMETA(DisplayName = "Countdown")
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(LogTimer, Log, All);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimerUpdatedSignature, float, CurrentTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimerStartedSignature, ETimerMode, Mode);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimerFinishedSignature);
+DECLARE_DYNAMIC_DELEGATE(FOnCountdownFinished);
 
 /**
  * A subsystem class that provides timer functionality within a game instance.
@@ -31,6 +31,15 @@ class TIMERPLUGIN_API UTimerSubsystem : public UGameInstanceSubsystem, public FT
 	GENERATED_BODY()
 
 public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+	
+	/**
+	 * Fires once any timer is started.
+	 */
+	UPROPERTY(BlueprintAssignable)
+	FTimerStartedSignature OnTimerStarted;
+	
 	/**
 	* Fires every tick with the "current" value:
 	* - Stopwatch mode: elapsed time
