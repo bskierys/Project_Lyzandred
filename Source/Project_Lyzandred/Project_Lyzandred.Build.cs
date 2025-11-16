@@ -12,7 +12,7 @@ public class Project_Lyzandred : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		
-		PrivateIncludePaths.AddRange(new string[] { "Project_Lyzandred" });
+		PrivateIncludePaths.AddRange(new string[] { "Project_Lyzandred", "TimerPlugin" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
