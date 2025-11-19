@@ -30,6 +30,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Level")
 	ULevelDataAsset* LevelToLoad = nullptr;
 
+	/**
+	 * Level Asset to Unload when Entering Sublevel from Persistent. It will be loaded back when returning.
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Level")
+	ULevelDataAsset* LevelToUnload = nullptr;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Events")
 	void LoadLevel();
 	virtual void LoadLevel_Implementation();

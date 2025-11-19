@@ -52,6 +52,7 @@ float UTimerSubsystem::StopTimer()
 
 	bRunning = false;
 	CurrentTime = FPlatformTime::Seconds() - StartTime;
+	OnTimerFinished.Broadcast();
 	PendingCountdownFinished = FOnCountdownFinished();
 
 	UE_LOG(LogTimer, Log, TEXT("Timer ended. Time: %f"), CurrentTime);

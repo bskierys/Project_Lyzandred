@@ -86,6 +86,16 @@ void ULyz_MagicRevealComponent::SetCollisionSolid(bool bSolid, bool bMagicVisibl
 				Prim->SetCollisionResponseToChannels(Info.Responses);
 				if (Info.OriginalMaterial) Prim->SetMaterial(0, Info.OriginalMaterial);
 				Prim->CastShadow = Info.bCastShadow;
+
+				if (Prim->IsA<UInstancedStaticMeshComponent>())
+				{
+					// TODO: Hardcoding may be problematic in longer term
+					UInstancedStaticMeshComponent* ISMC = Cast<UInstancedStaticMeshComponent>(Prim);
+					ISMC->SetCollisionEnabled(Info.CollisionEnabled);
+					ISMC->BodyInstance.SetResponseToAllChannels(ECR_Block);
+					ISMC->BodyInstance.SetResponseToChannel(ECC_WorldDynamic, ECR_Block);
+					ISMC->RecreatePhysicsState();
+				}
 			}
 			else
 			{

@@ -629,3 +629,19 @@ death.
 * LYZ-227 [Plugin] Use Timer Plugin in the level.
   * Lever that activates the environment in Act 3 and that is switched off
   after some time.
+
+### 2025-11-19
+
+* LYZ-221 [Level] Polish the Quest in Act3.
+
+* LYZ-232 [Level] Act3 - Go back to the Investigator after killing the enemies.
+
+* LYZ-233 [Props] Dungeon Floor as a separate actor (as DungeonWall).
+
+* Fix LYZ-231 [Bug] Conflicting lightning between persistent level and Sublevels.
+  * Unload MainLevel lightning when loading other sublevels.
+
+* Fix LYZ-218 [Bug] Skeletor not spawning properly in Act3.
+  * Fix setting reference between Enemies and their controllers.
+
+* LYZ-222 [Quest] Quest Stage for collecting an item.

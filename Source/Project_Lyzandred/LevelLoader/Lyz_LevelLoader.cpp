@@ -1,6 +1,7 @@
 #include "Lyz_LevelLoader.h"
 #include "LevelDataAsset.h"
 #include "LevelLoaderSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Project_Lyzandred/Lyz_WorldLibrary.h"
 
 ALyz_LevelLoader::ALyz_LevelLoader()
@@ -48,6 +49,28 @@ void ALyz_LevelLoader::LoadLevel_Implementation()
 		return;
 	}
 
+	const UWorld* World = ULyz_WorldLibrary::GetWorldSafe();
+	if (IsValid(LevelToUnload) && World)
+	{
+		for (const auto SublevelAsset: LevelToUnload->Sublevels)
+		{
+			FSoftObjectPath Path = SublevelAsset.ToSoftObjectPath();
+			if (!Path.IsValid())
+			{
+				continue;
+			}
+			
+			FName SubName(*Path.GetAssetName());
+			const auto SubLevel = UGameplayStatics::GetStreamingLevel(World, SubName);
+			if (!SubLevel)
+			{
+				continue;
+			}
+
+			SubLevel->SetShouldBeLoaded(false);
+		}
+	}
+	
 	LevelLoaderSubsystem->LoadSublevelsFromData(LevelToLoad, true);
 }
 
@@ -57,6 +80,28 @@ void ALyz_LevelLoader::UnloadLevel_Implementation()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Missing subsystem or LevelData"));
 		return;
+	}
+
+	const UWorld* World = ULyz_WorldLibrary::GetWorldSafe();
+	if (IsValid(LevelToUnload) && World)
+	{
+		for (const auto SublevelAsset: LevelToUnload->Sublevels)
+		{
+			FSoftObjectPath Path = SublevelAsset.ToSoftObjectPath();
+			if (!Path.IsValid())
+			{
+				continue;
+			}
+			
+			FName SubName(*Path.GetAssetName());
+			const auto SubLevel = UGameplayStatics::GetStreamingLevel(World, SubName);
+			if (!SubLevel)
+			{
+				continue;
+			}
+
+			SubLevel->SetShouldBeLoaded(true);
+		}
 	}
 
 	LevelLoaderSubsystem->UnloadSublevelsFromData(LevelToLoad);
